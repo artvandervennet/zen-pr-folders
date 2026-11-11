@@ -1,0 +1,55 @@
+name: Bug report
+description: Something doesn't work as described.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Security problems go through private vulnerability reporting (see SECURITY.md), not here.
+        Please remove repository names, PR titles and anything else private from logs and screenshots.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: zen
+    attributes:
+      label: Zen version
+      placeholder: "1.24.1b"
+    validations:
+      required: true
+  - type: input
+    id: sine
+    attributes:
+      label: Sine version
+      placeholder: "2.3.3"
+  - type: input
+    id: mod
+    attributes:
+      label: Mod version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: Data source
+      options:
+        - github.com login (no token)
+        - GitHub token
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Browser Console output
+      description: Lines starting with `[zen-pr-folders]` (Cmd+Shift+J on macOS, Ctrl+Shift+J elsewhere).
+      render: text
+  - type: textarea
+    id: mods
+    attributes:
+      label: Other mods
+      description: Other Sine or Zen mods you have enabled. Folder styling often interacts with them.

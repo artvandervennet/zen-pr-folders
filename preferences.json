@@ -1,0 +1,60 @@
+[
+    {
+        "type": "checkbox",
+        "property": "zen-pr-folders.no-indent",
+        "label": "Custom indentation inside PR folders",
+        "margin": "12px 0 4px 0"
+    },
+    {
+        "type": "text",
+        "label": "Replaces Zen's indentation for subfolders, stack groups and their tabs with the amount chosen below. A line under the last tab marks where each subfolder and stack group stops.",
+        "margin": "0 0 12px 24px",
+        "size": "12px"
+    },
+    {
+        "type": "dropdown",
+        "property": "zen-pr-folders.indent",
+        "label": "Indentation per level",
+        "defaultValue": "0px",
+        "processAs": "var",
+        "options": [
+            {
+                "label": "None",
+                "value": "0px"
+            },
+            {
+                "label": "4 px",
+                "value": "4px"
+            },
+            {
+                "label": "8 px",
+                "value": "8px"
+            },
+            {
+                "label": "12 px",
+                "value": "12px"
+            },
+            {
+                "label": "16 px",
+                "value": "16px"
+            },
+            {
+                "label": "20 px",
+                "value": "20px"
+            }
+        ],
+        "margin": "0 0 12px 24px"
+    },
+    {
+        "type": "string",
+        "property": "zen-pr-folders.default-interval",
+        "label": "Refresh interval for new folders, in seconds (minimum 15)",
+        "placeholder": "60"
+    },
+    {
+        "type": "text",
+        "label": "Each folder's interval can be changed from its right-click menu. The GitHub token is set there too.",
+        "margin": "0 0 12px 0",
+        "size": "12px"
+    }
+]

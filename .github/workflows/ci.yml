@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Check that the browser scripts parse
+        run: |
+          for file in engine.sys.mjs window.uc.mjs lib/*.mjs; do
+            node --check "$file"
+          done
+
+      - name: Check that the manifests are valid JSON
+        run: node -e 'for (const f of ["theme.json", "preferences.json", "package.json"]) JSON.parse(require("fs").readFileSync(f, "utf8"))'
+
+      - name: Run tests
+        run: npm test
+
+  # One stable check name for the branch rules, whatever the matrix becomes.
+  ci-passed:
+    name: ci-passed
+    if: always()
+    needs: [test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fail when a test job did not succeed
+        if: needs.test.result != 'success'
+        run: exit 1

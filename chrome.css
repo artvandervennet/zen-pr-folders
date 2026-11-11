@@ -1,0 +1,61 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+/* Optional: custom indentation inside PR folders.
+   The checkbox pref zen-pr-folders.no-indent turns this block on (it began as "no indentation",
+   hence the name). The amount per level comes from the dropdown pref zen-pr-folders.indent, which
+   Sine exposes as --zen-pr-folders-indent; without it every level starts at the same left edge. A subfolder or stack group starts at its name and stops at
+   a line under its last tab (optional per folder, attribute prf-divider); the line of a stack group is shorter than its subfolder's. */
+@media (-moz-pref("zen-pr-folders.no-indent")) {
+  /* Zen indents each child of a folder; the Tree Connectors mod indents the container as well. */
+  :root[zen-sidebar-expanded] zen-folder:is([prf-folder], [prf-stack]) > .tab-group-container > * {
+    --zen-folder-indent: var(--zen-pr-folders-indent, 0px) !important;
+    margin-inline-start: var(--zen-pr-folders-indent, 0px) !important;
+  }
+
+  :root[zen-sidebar-expanded="true"] zen-folder:is([prf-folder], [prf-stack]) > .tab-group-container {
+    margin-inline-start: 0 !important;
+  }
+
+  /* The line is painted as a background at the bottom of the folder, with padding to make room
+     for it. No pseudo-element: other mods already use the folder's ::before and ::after.
+     The folder element can be wider than the rounded box you see (Zia draws that box inset by
+     --zia-folder-box-left/right), so the line is measured from that box when those are set,
+     and centred in it with the same gap on both sides. The top folder gets no line. */
+  :root[zen-sidebar-expanded="true"] zen-folder:is([prf-folder="sub"], [prf-stack])[prf-divider]:not([collapsed]) {
+    --prf-line-left: calc(var(--zia-folder-box-left, 0px) + 14px);
+    --prf-line-right: calc(var(--zia-folder-box-right, 0px) + 14px);
+    padding-block-end: 12px !important;
+    background-image: linear-gradient(
+      color-mix(in srgb, currentColor 32%, transparent),
+      color-mix(in srgb, currentColor 32%, transparent)
+    ) !important;
+    background-repeat: no-repeat !important;
+    background-size: calc(100% - var(--prf-line-left) - var(--prf-line-right)) 2px !important;
+    background-position: left var(--prf-line-left) bottom calc(var(--zia-folder-box-bottom, 0px) + 6px) !important;
+  }
+
+  /* The connector lines are drawn for indented children and would cross the tabs now. */
+  zen-folder:is([prf-folder], [prf-stack]) > .tab-group-container > .tree-connector {
+    display: none !important;
+  }
+}
+
+/* A pull request that no longer matches the query but is still open in a tab. */
+tab[prf-stale] .tab-label-container {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+/* The last refresh of this folder failed. The tooltip on the label has the reason. */
+zen-folder[prf-error] > .tab-group-label-container .tab-group-label::after {
+  content: " !";
+  color: var(--zen-colors-danger, #e5484d);
+  font-weight: 700;
+}
+
+/* Stack groups read as part of their folder, not as folders in their own right. */
+zen-folder[prf-stack] > .tab-group-label-container .tab-group-label {
+  font-style: italic;
+}

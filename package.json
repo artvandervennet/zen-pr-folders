@@ -1,0 +1,24 @@
+{
+  "name": "zen-pr-folders",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Sine mod for Zen Browser: GitHub pull request live folders with search queries and GitHub Stacks grouping",
+  "license": "MPL-2.0",
+  "author": "Art Van der Vennet (https://github.com/artvandervennet)",
+  "homepage": "https://github.com/artvandervennet/zen-pr-folders#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artvandervennet/zen-pr-folders.git"
+  },
+  "bugs": {
+    "url": "https://github.com/artvandervennet/zen-pr-folders/issues"
+  },
+  "keywords": ["zen-browser", "sine", "github", "pull-requests", "stacked-prs"],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/"
+  }
+}

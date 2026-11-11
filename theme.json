@@ -1,0 +1,21 @@
+{
+    "id": "zen-pr-folders",
+    "name": "PR Live Folders",
+    "description": "GitHub pull request folders driven by search queries, with subfolders and automatic grouping by GitHub Stacks.",
+    "version": "0.1.0",
+    "author": "artvandervennet",
+    "homepage": "https://github.com/artvandervennet/zen-pr-folders",
+    "readme": "https://raw.githubusercontent.com/artvandervennet/zen-pr-folders/main/README.md",
+    "license": "MPL-2.0",
+    "fork": ["zen"],
+    "style": {
+        "chrome": "chrome.css"
+    },
+    "preferences": "preferences.json",
+    "scripts": {
+        "window.uc.mjs": {
+            "include": ["chrome://browser/content/browser.xhtml"]
+        }
+    },
+    "tags": ["Zen Browser", "GitHub", "Tab Folders"]
+}
