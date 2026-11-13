@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { composeQuery, hasQualifier, itemId, parseItemId } from "../lib/query.sys.mjs";
 import { searchPulls, normalizePull, GithubError } from "../lib/github.sys.mjs";
 import { buildEntries, filterStack } from "../lib/group.sys.mjs";
-import { diffContainer } from "../lib/reconcile.sys.mjs";
+import { diffContainer, arrangeLayout } from "../lib/reconcile.sys.mjs";
 
 function pull(number, updatedAt, stack = null, repo = "acme/app") {
   return {
@@ -289,4 +289,18 @@ test("diffContainer keeps an empty stack group that has its own query", () => {
   const [stack] = buildEntries([pull(11, "2026-11-10T08:00:00Z", { number: 4, position: 1 })]);
   const diff = diffContainer({ containerId: "f", entries: [filterStack(stack, new Set())], current: [] });
   assert.deepEqual(diff.layout, [{ type: "stack", key: "acme/app~4", label: "PR 11 (3)", items: [] }]);
+});
+
+test("arrangeLayout keeps what is shown in place and puts new entries on top", () => {
+  const layout = [
+    { type: "pr", itemId: "c|r#3" },
+    { type: "stack", key: "r~9", items: [] },
+    { type: "pr", itemId: "c|r#1" },
+    { type: "pr", itemId: "c|r#4" },
+  ];
+  const current = ["c|r#1", "c|r#gone", "stack:r~9"];
+  const keys = list => list.map(g => g.itemId ?? g.key);
+  assert.deepEqual(keys(arrangeLayout(layout, current)), ["c|r#3", "c|r#4", "c|r#1", "r~9"]);
+  assert.deepEqual(keys(arrangeLayout(layout, current, { resort: true })), ["c|r#3", "r~9", "c|r#1", "c|r#4"]);
+  assert.deepEqual(keys(arrangeLayout(layout, [])), keys(layout));
 });

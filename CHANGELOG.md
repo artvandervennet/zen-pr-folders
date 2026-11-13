@@ -4,6 +4,15 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Added
+
+- **Re-sort PR folders by activity on every refresh** in the mod's settings, off by default.
+
+### Changed
+
+- A refresh no longer reorders a folder. New pull requests and stack groups are added at the top and the rest keep their place.
+- Tabs of pull requests that stop matching are closed on the next refresh, also when they were loaded. Only the selected tab stays until you switch away from it.
+
 ## [0.1.1] - 2026-11-13
 
 ### Added

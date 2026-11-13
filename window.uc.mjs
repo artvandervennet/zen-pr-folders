@@ -5,12 +5,12 @@
 // Runs in every browser window. Creates, moves and removes the tabs the engine asks for,
 // and adds the menu items.
 
-const { Engine, diffContainer, parseItemId } = ChromeUtils.importESModule(
+const { Engine, diffContainer, arrangeLayout, parseItemId } = ChromeUtils.importESModule(
   "chrome://sine/content/zen-pr-folders/engine.sys.mjs"
 );
 
 const ITEM = "prf-item"; // on a managed tab: "<container folder id>|owner/repo#number"
-const STALE = "prf-stale"; // on a managed tab that no longer matches but is still open
+const STALE = "prf-stale"; // on the selected managed tab after its pull request stopped matching
 const GITHUB_ICON = "chrome://browser/content/zen-images/favicons/github.svg";
 const INTERVALS = [
   [30, "30 seconds"],
@@ -56,8 +56,9 @@ function itemOf(tab) {
   return id || null;
 }
 
+/** Only the tab you are looking at survives a refresh that drops its pull request. */
 function isOpen(tab) {
-  return tab.selected || (!!tab.linkedPanel && !tab.hasAttribute("pending"));
+  return tab.selected;
 }
 
 function setStale(tab, stale) {
@@ -216,6 +217,17 @@ async function applyContainer(plan) {
     current.push({ itemId: id, open: isOpen(tab), stale: tab.hasAttribute(STALE) });
   }
 
+  // What the folder shows now, top to bottom, so a refresh can leave it in place.
+  const shownOrder = [];
+  for (const child of el.groupContainer.children) {
+    const id = gBrowser.isTab(child) ? itemOf(child) : null;
+    if (id) {
+      shownOrder.push(id);
+    } else if (child.hasAttribute?.("prf-stack")) {
+      shownOrder.push(`stack:${child.getAttribute("prf-stack")}`);
+    }
+  }
+
   const diff = diffContainer({
     containerId: plan.id,
     entries: plan.entries,
@@ -289,7 +301,8 @@ async function applyContainer(plan) {
 
   // Put every tab in its folder: loose ones in the container, stacked ones in their group.
   const rootNodes = [];
-  for (const group of diff.layout) {
+  const resort = Services.prefs.getBoolPref("zen-pr-folders.auto-sort", false);
+  for (const group of arrangeLayout(diff.layout, shownOrder, { resort })) {
     if (group.type === "pr") {
       const tab = tabs.get(group.itemId);
       if (tab && tab.group !== el) {
@@ -719,6 +732,14 @@ async function start() {
     const id = tab.getAttribute(ITEM);
     if (id && !removing.has(tab) && !tab.hasAttribute(STALE)) {
       Engine.dismiss(id);
+    }
+  });
+
+  // A tab kept only because it was selected goes once you switch away from it.
+  listen(gBrowser.tabContainer, "TabSelect", event => {
+    const previous = event.detail?.previousTab;
+    if (previous?.hasAttribute(STALE) && previous.isConnected && !removing.has(previous)) {
+      closeTabs([previous]);
     }
   });
 

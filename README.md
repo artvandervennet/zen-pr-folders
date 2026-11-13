@@ -34,8 +34,8 @@ To remove the mod, remove it in Sine's settings. Your queries and presets stay i
 - A folder has a query in [GitHub's search syntax](https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests), such as `is:open org:my-org review-requested:@me -label:wip`.
 - Subfolders have their own query, added to the folder's. With subfolders present, the folder itself lists what matches its query and no subfolder.
 - Pull requests in a GitHub Stack are grouped, one group per stack, in merge order. A stack group can have its own filter.
-- Stack groups and single pull requests are sorted together by latest activity. A query with its own `sort:` keeps GitHub's order.
-- A pull request that is merged, closed or stops matching leaves on the next refresh. If its tab is open it stays, struck through, until you close it.
+- New pull requests and stack groups are added at the top. What is already in the folder keeps its place, unless **Re-sort PR folders by activity on every refresh** is on in the mod's settings. With it on, the most recently updated move to the top. The first fill of a folder is sorted by activity, or in GitHub's order when the query has its own `sort:`.
+- A pull request that is merged, closed or stops matching has its tab closed on the next refresh. The tab you are looking at stays, struck through, and closes when you switch to another tab.
 - Closing a tab hides that pull request in that folder until it stops matching. **Restore closed pull requests** brings them back.
 - Folders refresh every 60 seconds by default, and also when you expand one, when the window regains focus and after the computer wakes.
 

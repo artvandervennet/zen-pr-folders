@@ -74,7 +74,7 @@ function sessionFetch(url, headers = {}, userContextId = 0) {
 }
 import { buildEntries, filterStack } from "./lib/group.sys.mjs";
 
-export { diffContainer } from "./lib/reconcile.sys.mjs";
+export { diffContainer, arrangeLayout } from "./lib/reconcile.sys.mjs";
 export { parseItemId, itemId } from "./lib/query.sys.mjs";
 
 const CONFIG_FILE = "zen-pr-folders.json";

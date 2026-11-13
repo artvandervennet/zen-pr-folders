@@ -46,6 +46,18 @@
         "margin": "0 0 12px 24px"
     },
     {
+        "type": "checkbox",
+        "property": "zen-pr-folders.auto-sort",
+        "label": "Re-sort PR folders by activity on every refresh",
+        "margin": "12px 0 4px 0"
+    },
+    {
+        "type": "text",
+        "label": "Off: pull requests and stacks keep their place and new ones are added at the top. On: the most recently updated move to the top on every refresh.",
+        "margin": "0 0 12px 24px",
+        "size": "12px"
+    },
+    {
         "type": "string",
         "property": "zen-pr-folders.default-interval",
         "label": "Refresh interval for new folders, in seconds (minimum 15)",
