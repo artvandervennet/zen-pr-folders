@@ -4,7 +4,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-11-13
+## [0.1.1] - 2026-11-13
 
 ### Added
 
@@ -23,6 +23,6 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - One icon for all stack groups.
 - Custom indentation per level, with an optional line under each subfolder and stack group.
 
-[Unreleased]: https://github.com/artvandervennet/zen-pr-folders/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/artvandervennet/zen-pr-folders/compare/v0.1.0...v0.2.0
+[Unreleased]: https://github.com/artvandervennet/zen-pr-folders/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/artvandervennet/zen-pr-folders/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/artvandervennet/zen-pr-folders/releases/tag/v0.1.0

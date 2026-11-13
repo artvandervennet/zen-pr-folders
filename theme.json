@@ -2,7 +2,7 @@
     "id": "zen-pr-folders",
     "name": "PR Live Folders",
     "description": "GitHub pull request folders driven by search queries, with subfolders and automatic grouping by GitHub Stacks.",
-    "version": "0.2.0",
+    "version": "0.1.1",
     "author": "artvandervennet",
     "homepage": "https://github.com/artvandervennet/zen-pr-folders",
     "readme": "https://raw.githubusercontent.com/artvandervennet/zen-pr-folders/main/README.md",
