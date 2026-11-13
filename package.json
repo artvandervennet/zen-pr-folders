@@ -1,6 +1,6 @@
 {
   "name": "zen-pr-folders",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Sine mod for Zen Browser: GitHub pull request live folders with search queries and GitHub Stacks grouping",
