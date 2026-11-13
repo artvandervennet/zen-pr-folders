@@ -4,6 +4,10 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Added
+
+- Rename a stack group with **Rename stack…** or Zen's own **Rename**. The name survives refreshes and restarts.
+
 ## [0.1.0] - 2026-11-11
 
 ### Added

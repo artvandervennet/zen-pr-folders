@@ -49,6 +49,10 @@ Right-click a PR folder for **Edit query…**, **Add subfolder with query…**, 
 
 Set up a folder or subfolder once (name, icon with Zen's **Change icon**, query), then right-click it and choose **Save as preset**. **New PR live folder from preset** in the sidebar menu and **Add subfolder from preset** on a PR folder then create it in one click. **Remove preset** is on the folder's menu.
 
+### Stack names
+
+A stack group is named after its bottom pull request until you rename it, with **Rename stack…** on its right-click menu or with Zen's own **Rename**. The name stays when pull requests are added to or merged from the stack, and goes away with the stack once it no longer matches. Rename it to an empty name to go back to the automatic one.
+
 ### Stack icon
 
 Change the icon of one stack group with Zen's **Change icon**, then right-click it and choose **Use this icon for all stacks**. Existing groups change at once and new ones get the same icon.
