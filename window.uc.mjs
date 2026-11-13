@@ -176,7 +176,12 @@ function order(folder, nodes) {
 // --- applying a plan ---------------------------------------------------------
 
 async function applyContainer(plan) {
-  const unchanged = { id: plan.id, dismissed: plan.dismissed, stackFolders: plan.stackFolders };
+  const unchanged = {
+    id: plan.id,
+    dismissed: plan.dismissed,
+    stackFolders: plan.stackFolders,
+    stackNames: plan.stackNames,
+  };
   const el = folderEl(plan.id);
   if (!el) {
     return unchanged;
@@ -235,6 +240,7 @@ async function applyContainer(plan) {
 
   // Stack groups are Zen subfolders, created when a stack first shows up.
   const stackFolders = { ...plan.stackFolders };
+  const stackNames = { ...plan.stackNames };
   const stackEls = new Map();
   for (const group of diff.layout) {
     if (group.type !== "stack") {
@@ -251,9 +257,22 @@ async function applyContainer(plan) {
         gZenFolders.setFolderUserIcon(stackEl, Engine.stackIcon);
       }
     }
-    if (stackEl.label !== group.label) {
-      stackEl.label = group.label;
+    // prf-label holds the name this mod last gave the group. When the label differs from it,
+    // the user renamed the group with Zen's "Rename": keep that name from now on.
+    const lastSet = stackEl.getAttribute("prf-label");
+    if (lastSet !== null && stackEl.label !== lastSet) {
+      const typed = (stackEl.label ?? "").trim();
+      if (typed && typed !== group.label) {
+        stackNames[group.key] = typed;
+      } else {
+        delete stackNames[group.key];
+      }
     }
+    const label = stackNames[group.key] || group.label;
+    if (stackEl.label !== label) {
+      stackEl.label = label;
+    }
+    stackEl.setAttribute("prf-label", label);
     stackEl.setAttribute("prf-stack", group.key);
     stackEl.toggleAttribute("prf-divider", config?.container.stackDivider !== false);
     stackEls.set(group.key, stackEl);
@@ -310,7 +329,7 @@ async function applyContainer(plan) {
     delete stackFolders[key];
   }
 
-  return { id: plan.id, dismissed: diff.dismissed, stackFolders };
+  return { id: plan.id, dismissed: diff.dismissed, stackFolders, stackNames };
 }
 
 const ui = {
@@ -463,6 +482,27 @@ function stackElsOf(container) {
   return Object.values(container.stackFolders).map(folderEl).filter(Boolean);
 }
 
+/** Names a stack group. Zen's own "Rename" works too; the next refresh picks that up. */
+async function renameStack(folder, found) {
+  const name = ask(
+    "Rename stack",
+    "Name for this stack group. Leave empty to name it after its bottom pull request again.",
+    found.name || folder.label
+  );
+  if (name === null) {
+    return;
+  }
+  await Engine.setStackName(folder.id, name);
+  if (name) {
+    folder.label = name;
+    folder.setAttribute("prf-label", name);
+  } else {
+    // The next refresh sets the automatic name.
+    folder.removeAttribute("prf-label");
+    await Engine.refresh(folder.id);
+  }
+}
+
 async function useIconForAllStacks(folder) {
   const icon = folder.iconURL;
   await Engine.setStackIcon(icon);
@@ -553,6 +593,7 @@ function buildFolderMenu(menu, event) {
   } else if (found.kind === "stack") {
     items.push(
       menuItem(found.query ? "Edit stack filter…" : "Filter this stack…", () => editQuery(folder, found)),
+      menuItem("Rename stack…", () => renameStack(folder, found)),
       menuItem("Refresh now", () => Engine.refresh(folder.id)),
       menuItem("Use this icon for all stacks", () => useIconForAllStacks(folder)),
       dividerItem("Line under stacks in this folder", found, "stackDivider", () => stackElsOf(found.container))

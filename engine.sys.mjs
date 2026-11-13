@@ -96,6 +96,8 @@ function newContainer(id, query, name = "", options = {}) {
     dismissed: [],
     stackFolders: {},
     stackQueries: {},
+    // Names the user gave stack groups, by stack key. Without one a group is named after its bottom PR.
+    stackNames: {},
   };
 }
 
@@ -145,6 +147,7 @@ class PrFoldersEngine {
           container.dismissed ??= [];
           container.stackFolders ??= {};
           container.stackQueries ??= {};
+          container.stackNames ??= {};
         }
       }
       this.#savedJson = JSON.stringify(this.#config);
@@ -201,6 +204,7 @@ class PrFoldersEngine {
               container,
               stackKey,
               query: container.stackQueries[stackKey] ?? "",
+              name: container.stackNames[stackKey] ?? "",
             };
           }
         }
@@ -255,6 +259,20 @@ class PrFoldersEngine {
       return;
     }
     found.container[key] = !!enabled;
+    await this.#save();
+  }
+
+  /** Gives a stack group a fixed name. An empty name goes back to the name of its bottom PR. */
+  async setStackName(id, name) {
+    const found = this.describe(id);
+    if (found?.kind !== "stack") {
+      return;
+    }
+    if (name) {
+      found.container.stackNames[found.stackKey] = name;
+    } else {
+      delete found.container.stackNames[found.stackKey];
+    }
     await this.#save();
   }
 
@@ -552,9 +570,13 @@ class PrFoldersEngine {
         }
         container.dismissed = applied.dismissed;
         container.stackFolders = applied.stackFolders;
-        for (const key of Object.keys(container.stackQueries)) {
-          if (!(key in container.stackFolders)) {
-            delete container.stackQueries[key];
+        container.stackNames = applied.stackNames ?? container.stackNames;
+        // A stack that is gone (merged, or no longer matching) takes its filter and name with it.
+        for (const settings of [container.stackQueries, container.stackNames]) {
+          for (const key of Object.keys(settings)) {
+            if (!(key in container.stackFolders)) {
+              delete settings[key];
+            }
           }
         }
       }
@@ -594,6 +616,7 @@ class PrFoldersEngine {
       entries,
       dismissed: [...container.dismissed],
       stackFolders: { ...container.stackFolders },
+      stackNames: { ...container.stackNames },
     };
   }
 }
