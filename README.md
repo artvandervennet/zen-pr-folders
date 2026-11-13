@@ -34,7 +34,7 @@ To remove the mod, remove it in Sine's settings. Your queries and presets stay i
 - A folder has a query in [GitHub's search syntax](https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests), such as `is:open org:my-org review-requested:@me -label:wip`.
 - Subfolders have their own query, added to the folder's. With subfolders present, the folder itself lists what matches its query and no subfolder.
 - Pull requests in a GitHub Stack are grouped, one group per stack, in merge order. A stack group can have its own filter.
-- New pull requests and stack groups are added at the top. What is already in the folder keeps its place, unless **Re-sort PR folders by activity on every refresh** is on in the mod's settings. With it on, the most recently updated move to the top. The first fill of a folder is sorted by activity, or in GitHub's order when the query has its own `sort:`.
+- New pull requests and stack groups are added at the top. What is already in the folder keeps its place, unless you tick **Re-sort by activity on every refresh** on the folder's right-click menu. Then the most recently updated move to the top. The first fill of a folder is sorted by activity, or in GitHub's order when the query has its own `sort:`.
 - A pull request that is merged, closed or stops matching has its tab closed on the next refresh. The tab you are looking at stays, struck through, and closes when you switch to another tab.
 - Closing a tab hides that pull request in that folder until it stops matching. **Restore closed pull requests** brings them back.
 - Folders refresh every 60 seconds by default, and also when you expand one, when the window regains focus and after the computer wakes.
@@ -59,7 +59,7 @@ Change the icon of one stack group with Zen's **Change icon**, then right-click 
 
 ### Indentation and lines
 
-In the mod's settings in Sine, **Custom indentation inside PR folders** replaces Zen's indentation with an amount per level (none to 20 px) and draws a line under the last tab of each subfolder and stack group. Switch the lines off per folder with **Line under this folder** and **Line under stacks in this folder**. Presets remember both.
+In the mod's settings in Sine, **Custom indentation inside PR folders** replaces Zen's indentation with an amount per level (none to 20 px) and draws a line under the last tab of each subfolder and stack group. Switch the lines off per folder with **Line under this folder** and **Line under stacks in this folder**. Presets remember both, and the re-sort setting too.
 
 ## Where the data comes from
 

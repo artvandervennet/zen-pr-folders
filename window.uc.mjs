@@ -301,7 +301,7 @@ async function applyContainer(plan) {
 
   // Put every tab in its folder: loose ones in the container, stacked ones in their group.
   const rootNodes = [];
-  const resort = Services.prefs.getBoolPref("zen-pr-folders.auto-sort", false);
+  const resort = config?.container.resort === true;
   for (const group of arrangeLayout(diff.layout, shownOrder, { resort })) {
     if (group.type === "pr") {
       const tab = tabs.get(group.itemId);
@@ -453,7 +453,7 @@ async function createFromPreset(parent, preset) {
   if (preset.icon) {
     gZenFolders.setFolderUserIcon(el, preset.icon);
   }
-  const options = { divider: preset.divider, stackDivider: preset.stackDivider };
+  const options = { divider: preset.divider, stackDivider: preset.stackDivider, resort: preset.resort };
   if (parent) {
     await Engine.addSubfolder(parent.id, el.id, preset.name, preset.query, options);
   } else {
@@ -479,10 +479,24 @@ function presetMenu(label, onPick) {
 function dividerItem(label, found, key, targets) {
   const enabled = found.container[key] !== false;
   const item = menuItem(label, async () => {
-    await Engine.setDivider(found.container.id, key, !enabled);
+    await Engine.setOption(found.container.id, key, !enabled);
     for (const target of targets()) {
       target.toggleAttribute("prf-divider", !enabled);
     }
+  });
+  item.setAttribute("type", "checkbox");
+  if (enabled) {
+    item.setAttribute("checked", "true");
+  }
+  return item;
+}
+
+/** Off by default: a refresh keeps the folder's order and adds new pull requests on top. */
+function resortItem(found, folder) {
+  const enabled = found.container.resort === true;
+  const item = menuItem("Re-sort by activity on every refresh", async () => {
+    await Engine.setOption(found.container.id, "resort", !enabled);
+    Engine.refresh(folder.id);
   });
   item.setAttribute("type", "checkbox");
   if (enabled) {
@@ -627,6 +641,7 @@ function buildFolderMenu(menu, event) {
       items.push(dividerItem("Line under this folder", found, "divider", () => [folder]));
     }
     items.push(
+      resortItem(found, folder),
       dividerItem("Line under stacks in this folder", found, "stackDivider", () => stackElsOf(found.container)),
       menuItem("Save as preset", () =>
         Engine.savePreset({
@@ -635,6 +650,7 @@ function buildFolderMenu(menu, event) {
           query: found.query,
           divider: found.container.divider !== false,
           stackDivider: found.container.stackDivider !== false,
+          resort: found.container.resort === true,
         })
       )
     );
@@ -651,7 +667,7 @@ function buildFolderMenu(menu, event) {
     if (found.kind === "folder") {
       items.push(menuItem("Use a GitHub token (optional)…", askToken));
     }
-    items.push(menuItem("Stop updating this folder", () => Engine.forget(folder.id)));
+    items.push(menuItem("Turn into a plain folder (no more updates)", () => Engine.forget(folder.id)));
   }
   if (!items.length) {
     return;
