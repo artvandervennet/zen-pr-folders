@@ -74,7 +74,7 @@ function sessionFetch(url, headers = {}, userContextId = 0) {
 }
 import { buildEntries, filterStack } from "./lib/group.sys.mjs";
 
-export { diffContainer } from "./lib/reconcile.sys.mjs";
+export { diffContainer, arrangeLayout } from "./lib/reconcile.sys.mjs";
 export { parseItemId, itemId } from "./lib/query.sys.mjs";
 
 const CONFIG_FILE = "zen-pr-folders.json";
@@ -93,6 +93,8 @@ function newContainer(id, query, name = "", options = {}) {
     // Lines under this folder and under the stack groups in it (custom indentation only).
     divider: options.divider !== false,
     stackDivider: options.stackDivider !== false,
+    // Off: a refresh keeps the order and adds new PRs on top. On: re-sort by activity every time.
+    resort: options.resort === true,
     dismissed: [],
     stackFolders: {},
     stackQueries: {},
@@ -252,10 +254,10 @@ class PrFoldersEngine {
     await this.refresh(found.folder.id);
   }
 
-  /** key is "divider" (the folder's own line) or "stackDivider" (lines under its stack groups). */
-  async setDivider(id, key, enabled) {
+  /** key is "divider" (the folder's own line), "stackDivider" (lines under its stack groups) or "resort". */
+  async setOption(id, key, enabled) {
     const found = this.describe(id);
-    if (!found || !["divider", "stackDivider"].includes(key)) {
+    if (!found || !["divider", "stackDivider", "resort"].includes(key)) {
       return;
     }
     found.container[key] = !!enabled;
@@ -338,13 +340,13 @@ class PrFoldersEngine {
   }
 
   /** Saves a preset, replacing one with the same name. */
-  async savePreset({ name, icon = "", query = "", divider = true, stackDivider = true }) {
+  async savePreset({ name, icon = "", query = "", divider = true, stackDivider = true, resort = false }) {
     if (!name) {
       return;
     }
     this.#config.presets = [
       ...this.#config.presets.filter(preset => preset.name !== name),
-      { name, icon, query, divider, stackDivider },
+      { name, icon, query, divider, stackDivider, resort },
     ].sort((a, b) => a.name.localeCompare(b.name));
     await this.#save();
   }
